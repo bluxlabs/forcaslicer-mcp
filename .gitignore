@@ -1,0 +1,6 @@
+/result*
+/.test-work/
+__pycache__/
+*.pyc
+
+/ci-output/

@@ -1,0 +1,32 @@
+name: Physical path regression
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-gates:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: ci/requirements.txt
+      - run: python -m pip install -r ci/requirements.txt
+      - run: python ci/run.py --output ci-output
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validated-source-and-path-reports
+          path: |
+            ci-output/forcaslicer-mcp-source.tar.gz
+            ci-output/SHA256SUMS
+            ci-output/source-manifest.json
+            ci-output/ci-result.json
+            ci-output/*.json
+            ci-output/*.xml
+            ci-output/*.log
+          if-no-files-found: error
